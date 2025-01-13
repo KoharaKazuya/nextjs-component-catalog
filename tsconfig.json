@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "lib",
+    "jsx": "react-jsx",
     "declaration": true,
     "declarationMap": true
   }

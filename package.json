@@ -34,7 +34,13 @@
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",
     "@types/node": "^22.10.5",
+    "@types/react": "^19.0.6",
+    "next": "^15.1.4",
     "typescript": "^5.7.3"
+  },
+  "peerDependencies": {
+    "next": "*",
+    "react": "*"
   },
   "engines": {
     "node": ">=22"
