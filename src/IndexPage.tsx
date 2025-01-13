@@ -1,15 +1,20 @@
 "use client";
 
-import Link from "next/link.js";
+import linkModule from "next/link.js";
 import { usePathname, useSearchParams } from "next/navigation.js";
 import { useCallback } from "react";
 
+const Link = linkModule.default;
+
 export type IndexPageProps = {
   links: string[];
+  env: {
+    catalogPath: string;
+  };
 };
 
-export default function IndexPage({ links }: IndexPageProps) {
-  const { resource, getIframeHref } = useIframe();
+export default function IndexPage({ links, env }: IndexPageProps) {
+  const { resource, getInternalLink, getExternalLink } = useIframe(env);
 
   return (
     <div
@@ -23,10 +28,10 @@ export default function IndexPage({ links }: IndexPageProps) {
       <ul>
         {links.map((link) => (
           <li key={link}>
-            <Link.default href={getIframeHref(link)}>{link}</Link.default>{" "}
-            <Link.default href={`/_dev/catalog/${link}`} target="_blank">
+            <Link href={getInternalLink(link)}>{link}</Link>{" "}
+            <Link href={getExternalLink(link)} target="_blank">
               x
-            </Link.default>
+            </Link>
           </li>
         ))}
       </ul>
@@ -46,19 +51,26 @@ export default function IndexPage({ links }: IndexPageProps) {
   );
 }
 
-function useIframe() {
+function useIframe({ catalogPath }: IndexPageProps["env"]) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const resource = searchParams.get("resource");
 
-  const getIframeHref = useCallback(
+  const getInternalLink = useCallback(
     (link: string) => {
       const ps = new URLSearchParams(searchParams);
-      ps.set("resource", `/_dev/catalog/${link}`);
+      ps.set("resource", `${catalogPath}/${link}`);
       return `${pathname}?${ps}`;
     },
-    [pathname, searchParams]
+    [pathname, searchParams, catalogPath]
   );
 
-  return { resource, getIframeHref } as const;
+  const getExternalLink = useCallback(
+    (link: string) => {
+      return `${catalogPath}/${link}`;
+    },
+    [catalogPath]
+  );
+
+  return { resource, getInternalLink, getExternalLink } as const;
 }

@@ -43,30 +43,73 @@ export type WatchOptions = {
   quiet?: boolean;
 };
 
-/**
- * ソースコードを監視し、変更があるたびに対応するファイルを生成する
- */
-export async function watch({
+export type CanonicalWatchOptions = {
+  projectRoot: string;
+  watchRoot: string;
+  outputPath: string;
+  quiet: boolean;
+  indexComponentImport: string;
+  catalogPath: string;
+};
+
+async function getCanonicalWatchOptions({
   projectRoot = process.cwd(),
   watchRoot,
   outputPath,
   indexComponentPath,
   quiet = false,
-}: WatchOptions = {}) {
+}: WatchOptions): Promise<CanonicalWatchOptions> {
   const hasSrcDir = await fs.stat(path.join(projectRoot, "src")).then(
     () => true,
     () => false
   );
   if (!watchRoot) watchRoot = hasSrcDir ? "src/" : "./";
   if (!outputPath)
-    (outputPath =
+    outputPath =
       (hasSrcDir ? "src/" : "") +
-      "app/dev/catalog/(nextjs-component-catalog-gen)/"),
-      // 一度 outputPath をすべて削除する
-      await fs.rm(path.join(projectRoot, outputPath), {
-        recursive: true,
-        force: true,
-      });
+      "app/dev/catalog/(nextjs-component-catalog-gen)/";
+
+  // TODO: 相対パス指定を解除する
+  const indexComponentImport =
+    indexComponentPath ?? "@koharakazuya/nextjs-component-catalog/IndexPage";
+
+  const catalogPath =
+    "/" +
+    outputPath
+      .replace(/^src\//, "")
+      .replace(/^app\//, "")
+      .replace(/(^|\/)\([^/]*\)/, "")
+      .replace(/\/$/, "");
+
+  return {
+    projectRoot,
+    watchRoot,
+    outputPath,
+    quiet,
+    indexComponentImport,
+    catalogPath,
+  } as const;
+}
+
+/**
+ * ソースコードを監視し、変更があるたびに対応するファイルを生成する
+ */
+export async function watch(options: WatchOptions = {}) {
+  const canonicalOptions = await getCanonicalWatchOptions(options);
+  const {
+    projectRoot,
+    watchRoot,
+    outputPath,
+    quiet,
+    indexComponentImport,
+    catalogPath,
+  } = canonicalOptions;
+
+  // 一度 outputPath をすべて削除する
+  await fs.rm(path.join(projectRoot, outputPath), {
+    recursive: true,
+    force: true,
+  });
 
   const watcher = startWatcher(path.join(projectRoot, watchRoot), {
     ignoreDir: path.join(projectRoot, outputPath),
@@ -133,31 +176,31 @@ export async function watch({
           const genTargetDir = getGenTargetDir(targetFilePath);
           const exportedNames = await parseAndGetStories(targetFilePath);
           return exportedNames.map((name) =>
-            path.relative(outputPath!, path.join(genTargetDir, name))
+            path.relative(outputPath, path.join(genTargetDir, name))
           );
         })
       )
     ).flat();
 
     const indexPageCode =
-      `import Index from "${
-        indexComponentPath ?? "@koharakazuya/nextjs-component-catalog/IndexPage"
-      }";\n` +
+      `import IndexPageProps from "${indexComponentImport}";\n` +
       `\n` +
       `export default function Page() {\n` +
-      `  return <Index links={${JSON.stringify(links)}} />;\n` +
+      `  return <IndexPageProps links={${JSON.stringify(
+        links
+      )}} env={${JSON.stringify({ catalogPath })}} />;\n` +
       `}\n`;
-    await fs.writeFile(path.join(outputPath!, "page.tsx"), indexPageCode);
+    await fs.writeFile(path.join(outputPath, "page.tsx"), indexPageCode);
 
     if (!quiet) console.log(`Update: index page`);
   }
 
   function getGenTargetDir(targetFilePath: string) {
     const genPathBase = path.relative(
-      watchRoot!,
+      watchRoot,
       targetFilePath.replace(/\.catalog\.[jt]sx?$/i, "")
     );
-    const genTargetDir = path.join(outputPath!, genPathBase);
+    const genTargetDir = path.join(outputPath, genPathBase);
     return genTargetDir;
   }
 }

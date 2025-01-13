@@ -18,7 +18,7 @@
     },
     "./IndexPage": {
       "import": {
-        "types": "./lib/Index.d.ts",
+        "types": "./lib/IndexPage.d.ts",
         "default": "./lib/IndexPage.js"
       }
     }
