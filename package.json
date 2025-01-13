@@ -1,0 +1,17 @@
+{
+  "name": "@koharakazuya/nextjs-component-catalog",
+  "description": "CLI to generate comopnent catalog for Next.js (App Router)",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "bin": "lib/cli.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./IndexPage": "./lib/IndexPage.js"
+  },
+  "author": "KoharaKazuya <reflect.results@gmail.com>",
+  "dependencies": {
+    "@swc/core": "^1.10.7",
+    "chokidar": "^4.0.3"
+  }
+}
