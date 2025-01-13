@@ -4,14 +4,36 @@
   "version": "0.1.0",
   "type": "module",
   "license": "MIT",
+  "files": [
+    "lib",
+    "src"
+  ],
   "bin": "lib/cli.js",
   "exports": {
-    ".": "./lib/index.js",
-    "./IndexPage": "./lib/IndexPage.js"
+    ".": {
+      "import": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./IndexPage": {
+      "import": {
+        "types": "./lib/Index.d.ts",
+        "default": "./lib/IndexPage.js"
+      }
+    }
   },
   "author": "KoharaKazuya <reflect.results@gmail.com>",
   "dependencies": {
     "@swc/core": "^1.10.7",
     "chokidar": "^4.0.3"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.0",
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3"
+  },
+  "scripts": {
+    "build": "tsc"
   }
 }
