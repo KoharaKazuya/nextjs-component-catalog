@@ -2,6 +2,8 @@ import swc from "@swc/core";
 import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { normalizeAppPath } from "./app-router.js";
+import type { IndexPageProps } from "./IndexPage.js";
 import { startWatcher } from "./watcher.js";
 
 export type WatchOptions = {
@@ -16,6 +18,7 @@ export type WatchOptions = {
    * 再帰的に監視するディレクトリのパス
    *
    * `projectRoot` より相対パスで指定する。
+   *
    * 省略した場合は `"./"` もしくは `"src/"`。
    */
   watchRoot?: string;
@@ -25,6 +28,7 @@ export type WatchOptions = {
    *
    * App Router のディレクトリ `app/` 以下である必要がある。
    * `projectRoot` より相対パスで指定する。
+   *
    * 省略した場合は `"app/dev/catalog/(nextjs-component-catalog-gen)/"` もしくは `"src/app/dev/catalog/(nextjs-component-catalog-gen)/"`。
    */
   outputPath?: string;
@@ -33,7 +37,9 @@ export type WatchOptions = {
    * カタログのトップページとして使用するコンポーネントのファイルのパス
    *
    * 指定したファイルでは export default を用いてコンポーネントを公開する必要がある。
-   * コンポーネントには全カタログ一覧として文字列配列の `links` プロパティが与えられる。
+   * コンポーネントには {@link IndexPageProps} が与えられる。
+   *
+   * 省略した場合はデフォルトのコンポーネントが使用される。
    */
   indexComponentPath?: string;
 
@@ -73,13 +79,9 @@ async function getCanonicalWatchOptions({
   const indexComponentImport =
     indexComponentPath ?? "@koharakazuya/nextjs-component-catalog/IndexPage";
 
-  const catalogPath =
-    "/" +
-    outputPath
-      .replace(/^src\//, "")
-      .replace(/^app\//, "")
-      .replace(/(^|\/)\([^/]*\)/, "")
-      .replace(/\/$/, "");
+  const catalogPath = normalizeAppPath(
+    "/" + outputPath.replace(/^(.\/)?(src\/)?app\//, "")
+  );
 
   return {
     projectRoot,
