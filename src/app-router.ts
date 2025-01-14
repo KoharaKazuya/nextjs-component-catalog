@@ -1,3 +1,8 @@
+/*
+ * This code snippet is based on an open-source project under the MIT License.
+ * https://github.com/vercel/next.js
+ */
+
 // @see https://github.com/vercel/next.js/blob/09e47152bf71839bc69e7d86b0073aa118eca1e8/packages/next/src/shared/lib/router/utils/app-paths.ts#L4-L52
 /**
  * Normalizes an app route so it represents the actual request path. Essentially

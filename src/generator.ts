@@ -213,10 +213,25 @@ export async function watch(options: WatchOptions = {}) {
 async function parseAndGetStories(targetFilePath: string) {
   const code = await fs.readFile(targetFilePath, { encoding: "utf-8" });
   const moduleAST = await swc.parse(code, { syntax: "typescript", tsx: true });
-  const exportedNames = moduleAST.body
+
+  const ns1 = moduleAST.body
     .filter((x) => x.type === "ExportDeclaration")
     .map((x) => x.declaration)
-    .filter((x) => x.type === "FunctionDeclaration")
-    .map((x) => x.identifier.value);
-  return exportedNames;
+    .flatMap((x) => {
+      if (x.type === "VariableDeclaration")
+        return x.declarations
+          .map((decl) => decl.id)
+          .filter((id) => id.type === "Identifier")
+          .map((id) => id.value);
+      if (x.type === "FunctionDeclaration") return [x.identifier.value];
+      return [];
+    });
+
+  const ns2 = moduleAST.body
+    .filter((x) => x.type === "ExportNamedDeclaration")
+    .flatMap((x) => x.specifiers)
+    .filter((x) => x.type === "ExportSpecifier")
+    .map((x) => x.exported?.value ?? x.orig.value);
+
+  return [...ns1, ...ns2];
 }
