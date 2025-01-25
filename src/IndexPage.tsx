@@ -91,7 +91,7 @@ function useIframe({ catalogPath }: IndexPageProps["env"]) {
   const getInternalLink = useCallback(
     (link: string) => {
       const ps = new URLSearchParams(searchParams);
-      ps.set("resource", `${catalogPath}/${link}`);
+      ps.set("resource", `${catalogPath}${link}`);
       return `${pathname}?${ps}`;
     },
     [pathname, searchParams, catalogPath]
@@ -99,7 +99,7 @@ function useIframe({ catalogPath }: IndexPageProps["env"]) {
 
   const getExternalLink = useCallback(
     (link: string) => {
-      return `${catalogPath}/${link}`;
+      return `${catalogPath}${link}`;
     },
     [catalogPath]
   );

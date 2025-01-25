@@ -1,22 +1,34 @@
 #!/usr/bin/env node
 
-import process from "node:process";
+import { Command } from "commander";
 import { watch } from "./generator.js";
 
-const [command] = process.argv.slice(2);
-switch (command) {
-  case "watch": {
-    await watch();
-    break;
-  }
-  default: {
-    showHelp();
-  }
-}
+const program = new Command();
 
-function showHelp() {
-  console.log(`Usage: nextjs-component-catalog [command]
+program
+  .name("nextjs-component-catalog")
+  .description(
+    "Next.js (App Router) 環境で .catalog.tsx ファイルを参照するルートファイルを生成します"
+  );
 
-Commands:
-  watch  ファイルの変更を開始します`);
-}
+program
+  .command("watch")
+  .description("ファイルの監視を開始します")
+  .option(
+    "--root <path>",
+    "再帰的に監視するディレクトリのパス (現在ディレクトリからの相対パス)"
+  )
+  .option(
+    "--output <path>",
+    "出力先ディレクトリのパス (現在ディレクトリからの相対パス)"
+  )
+  .option("--quiet", "ログを出力しない")
+  .action(async (options) => {
+    await watch({
+      watchRoot: options.root,
+      outputPath: options.output,
+      quiet: options.quiet,
+    });
+  });
+
+program.parse();

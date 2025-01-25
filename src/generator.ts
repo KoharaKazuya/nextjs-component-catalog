@@ -79,8 +79,8 @@ async function getCanonicalWatchOptions({
   const indexComponentImport =
     indexComponentPath ?? "@koharakazuya/nextjs-component-catalog/IndexPage";
 
-  const catalogPath = normalizeAppPath(
-    "/" + outputPath.replace(/^(.\/)?(src\/)?app\//, "")
+  const catalogPath = decodeURI(
+    normalizeAppPath("/" + outputPath.replace(/^(.\/)?(src\/)?app\//, ""))
   );
 
   return {
