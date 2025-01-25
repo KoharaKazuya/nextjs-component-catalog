@@ -2,7 +2,10 @@
 
 import linkModule from "next/link.js";
 import { usePathname, useSearchParams } from "next/navigation.js";
+import type { ReactNode } from "react";
 import { useCallback } from "react";
+import type { TreeNode } from "./directory-tree.js";
+import { constructTree } from "./directory-tree.js";
 
 const Link = linkModule.default;
 
@@ -15,6 +18,7 @@ export type IndexPageProps = {
 
 export default function IndexPage({ links, env }: IndexPageProps) {
   const { resource, getInternalLink, getExternalLink } = useIframe(env);
+  const tree = constructTree(links);
 
   return (
     <div
@@ -25,16 +29,17 @@ export default function IndexPage({ links, env }: IndexPageProps) {
         background: "#eee",
       }}
     >
-      <ul>
-        {links.map((link) => (
-          <li key={link}>
-            <Link href={getInternalLink(link)}>{link}</Link>{" "}
-            <Link href={getExternalLink(link)} target="_blank">
-              x
+      <LinkTree
+        tree={tree}
+        itemRenderer={({ path, name }) => (
+          <>
+            <Link href={getInternalLink(path)}>{name}</Link>{" "}
+            <Link href={getExternalLink(path)} target="_blank">
+              <small>↗</small>
             </Link>
-          </li>
-        ))}
-      </ul>
+          </>
+        )}
+      />
       <iframe
         key={resource}
         src={resource ?? undefined}
@@ -47,6 +52,33 @@ export default function IndexPage({ links, env }: IndexPageProps) {
           background: "#fff",
         }}
       />
+    </div>
+  );
+}
+
+function LinkTree({
+  tree,
+  itemRenderer,
+}: {
+  tree: TreeNode;
+  itemRenderer: (leaf: TreeNode) => ReactNode;
+}) {
+  return (
+    <div>
+      <div style={{ color: "#666", fontSize: 14, margin: "16px auto 8px" }}>
+        {tree.name}
+      </div>
+      <ul style={{ padding: 8 }}>
+        {tree.children.map((child) => (
+          <li key={child.path}>
+            {child.children.length > 0 ? (
+              <LinkTree tree={child} itemRenderer={itemRenderer} />
+            ) : (
+              itemRenderer(child)
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

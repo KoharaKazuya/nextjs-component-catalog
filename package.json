@@ -25,7 +25,10 @@
   },
   "author": "KoharaKazuya <reflect.results@gmail.com>",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "node --test",
+    "dev:build": "tsc --watch",
+    "dev:test": "node --test --watch"
   },
   "dependencies": {
     "@swc/core": "^1.10.7",
