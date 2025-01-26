@@ -33,7 +33,8 @@
   "dependencies": {
     "@swc/core": "^1.10.7",
     "chokidar": "^4.0.3",
-    "commander": "^13.1.0"
+    "commander": "^13.1.0",
+    "cosmiconfig": "^9.0.0"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",

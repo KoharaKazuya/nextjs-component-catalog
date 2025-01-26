@@ -6,7 +6,7 @@ import { normalizeAppPath } from "./app-router.js";
 import type { IndexPageProps } from "./IndexPage.js";
 import { startWatcher } from "./watcher.js";
 
-export type WatchOptions = {
+export type Options = {
   /**
    * Next.js プロジェクトのルートディレクトリのパス
    *
@@ -47,6 +47,11 @@ export type WatchOptions = {
    * `true` を指定した場合、ログを出力しない
    */
   quiet?: boolean;
+
+  /**
+   * `true` を指定した場合、監視モードで起動する
+   */
+  watch?: boolean;
 };
 
 export type CanonicalWatchOptions = {
@@ -56,6 +61,7 @@ export type CanonicalWatchOptions = {
   quiet: boolean;
   indexComponentImport: string;
   catalogPath: string;
+  watch: boolean;
 };
 
 async function getCanonicalWatchOptions({
@@ -64,7 +70,8 @@ async function getCanonicalWatchOptions({
   outputPath,
   indexComponentPath,
   quiet = false,
-}: WatchOptions): Promise<CanonicalWatchOptions> {
+  watch = false,
+}: Options): Promise<CanonicalWatchOptions> {
   const hasSrcDir = await fs.stat(path.join(projectRoot, "src")).then(
     () => true,
     () => false
@@ -90,13 +97,14 @@ async function getCanonicalWatchOptions({
     quiet,
     indexComponentImport,
     catalogPath,
+    watch,
   } as const;
 }
 
 /**
  * ソースコードを監視し、変更があるたびに対応するファイルを生成する
  */
-export async function watch(options: WatchOptions = {}) {
+export async function build(options: Options = {}) {
   const canonicalOptions = await getCanonicalWatchOptions(options);
   const {
     projectRoot,
@@ -105,6 +113,7 @@ export async function watch(options: WatchOptions = {}) {
     quiet,
     indexComponentImport,
     catalogPath,
+    watch,
   } = canonicalOptions;
 
   // 一度 outputPath をすべて削除する
@@ -117,6 +126,7 @@ export async function watch(options: WatchOptions = {}) {
     ignoreDir: path.join(projectRoot, outputPath),
     addRoute,
     removeRoute,
+    watch,
   });
 
   if (!quiet) console.log(" Start: nextjs-component-catalog watch mode");

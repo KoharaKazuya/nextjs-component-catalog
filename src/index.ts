@@ -1,1 +1,1 @@
-export { watch } from "./generator.js";
+export { build } from "./generator.js";

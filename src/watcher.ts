@@ -7,10 +7,12 @@ export function startWatcher(
     ignoreDir,
     addRoute,
     removeRoute,
+    watch = false,
   }: {
     ignoreDir?: string;
     addRoute?: (path: string) => void;
     removeRoute?: (path: string) => void;
+    watch?: boolean;
   } = {}
 ) {
   const watcher = chokidar.watch(target, {
@@ -22,6 +24,7 @@ export function startWatcher(
             (!ignoreDir || path.relative(ignoreDir, p).startsWith(".."))
           )
       ),
+    persistent: watch,
   });
   watcher
     .on("add", (path) => addRoute?.(path))

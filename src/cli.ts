@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { watch } from "./generator.js";
+import { cosmiconfig } from "cosmiconfig";
+import { build } from "./generator.js";
 
 const program = new Command();
 
@@ -12,22 +13,28 @@ program
   );
 
 program
-  .command("watch")
-  .description("ファイルの監視を開始します")
+  .command("build")
+  .description("ファイルを生成します")
   .option(
-    "--root <path>",
+    "--watchRoot <path>",
     "再帰的に監視するディレクトリのパス (現在ディレクトリからの相対パス)"
   )
   .option(
-    "--output <path>",
+    "--outputPath <path>",
     "出力先ディレクトリのパス (現在ディレクトリからの相対パス)"
   )
   .option("--quiet", "ログを出力しない")
+  .option("--watch", "監視モードを起動します")
   .action(async (options) => {
-    await watch({
-      watchRoot: options.root,
-      outputPath: options.output,
-      quiet: options.quiet,
+    const { config: configFile = {} } =
+      (await cosmiconfig("nextjs-component-catalog").search()) ?? {};
+    await build({
+      projectRoot: configFile.projectRoot,
+      watchRoot: options.watchRoot ?? configFile.watchRoot,
+      outputPath: options.outputPath ?? configFile.outputPath,
+      indexComponentPath: configFile.indexComponentPath,
+      quiet: options.quiet ?? configFile.quiet,
+      watch: options.watch,
     });
   });
 
