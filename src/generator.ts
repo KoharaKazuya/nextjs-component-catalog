@@ -116,12 +116,6 @@ export async function build(options: Options = {}) {
     watch,
   } = canonicalOptions;
 
-  // 一度 outputPath をすべて削除する
-  await fs.rm(path.join(projectRoot, outputPath), {
-    recursive: true,
-    force: true,
-  });
-
   const watcher = startWatcher(path.join(projectRoot, watchRoot), {
     ignoreDir: path.join(projectRoot, outputPath),
     addRoute,
@@ -215,6 +209,19 @@ export async function build(options: Options = {}) {
     const genTargetDir = path.join(outputPath, genPathBase);
     return genTargetDir;
   }
+}
+
+export async function clean(options: Options = {}) {
+  const canonicalOptions = await getCanonicalWatchOptions(options);
+  const { projectRoot, outputPath, quiet } = canonicalOptions;
+
+  // outputPath をすべて削除する
+  await fs.rm(path.join(projectRoot, outputPath), {
+    recursive: true,
+    force: true,
+  });
+
+  if (!quiet) console.log(`Delete: ${outputPath}`);
 }
 
 /**

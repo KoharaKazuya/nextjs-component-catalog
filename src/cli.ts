@@ -2,7 +2,7 @@
 
 import { Command } from "commander";
 import { cosmiconfig } from "cosmiconfig";
-import { build } from "./generator.js";
+import { build, clean } from "./generator.js";
 
 const program = new Command();
 
@@ -32,6 +32,23 @@ program
       projectRoot: configFile.projectRoot,
       watchRoot: options.watchRoot ?? configFile.watchRoot,
       outputPath: options.outputPath ?? configFile.outputPath,
+      indexComponentPath: configFile.indexComponentPath,
+      quiet: options.quiet ?? configFile.quiet,
+      watch: options.watch,
+    });
+  });
+
+program
+  .command("clean")
+  .description("生成したファイルを削除します")
+  .option("--quiet", "ログを出力しない")
+  .action(async (options) => {
+    const { config: configFile = {} } =
+      (await cosmiconfig("nextjs-component-catalog").search()) ?? {};
+    await clean({
+      projectRoot: configFile.projectRoot,
+      watchRoot: configFile.watchRoot,
+      outputPath: configFile.outputPath,
       indexComponentPath: configFile.indexComponentPath,
       quiet: options.quiet ?? configFile.quiet,
       watch: options.watch,
