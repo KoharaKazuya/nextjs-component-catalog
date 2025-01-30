@@ -82,9 +82,9 @@ async function getCanonicalWatchOptions({
       (hasSrcDir ? "src/" : "") +
       "app/dev/catalog/(nextjs-component-catalog-gen)/";
 
-  // TODO: 相対パス指定を解除する
-  const indexComponentImport =
-    indexComponentPath ?? "@koharakazuya/nextjs-component-catalog/IndexPage";
+  const indexComponentImport = indexComponentPath
+    ? path.relative(outputPath, indexComponentPath.replace(/\.[jt]sx?$/, ""))
+    : "@koharakazuya/nextjs-component-catalog/IndexPage";
 
   const catalogPath = decodeURI(
     normalizeAppPath("/" + outputPath.replace(/^(.\/)?(src\/)?app\//, ""))

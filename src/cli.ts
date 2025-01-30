@@ -23,6 +23,10 @@ program
     "--outputPath <path>",
     "出力先ディレクトリのパス (現在ディレクトリからの相対パス)"
   )
+  .option(
+    "--indexComponentPath <path>",
+    "カタログインデックスのパス (現在ディレクトリからの相対パス)"
+  )
   .option("--quiet", "ログを出力しない")
   .option("--watch", "監視モードを起動します")
   .action(async (options) => {
@@ -32,7 +36,8 @@ program
       projectRoot: configFile.projectRoot,
       watchRoot: options.watchRoot ?? configFile.watchRoot,
       outputPath: options.outputPath ?? configFile.outputPath,
-      indexComponentPath: configFile.indexComponentPath,
+      indexComponentPath:
+        options.indexComponentPath ?? configFile.indexComponentPath,
       quiet: options.quiet ?? configFile.quiet,
       watch: options.watch,
     });
