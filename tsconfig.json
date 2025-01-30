@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "outDir": "lib",
+    "jsx": "react-jsx",
+    "declaration": true,
+    "declarationMap": true
+  }
+}
