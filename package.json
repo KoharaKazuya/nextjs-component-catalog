@@ -1,9 +1,9 @@
 {
   "name": "@koharakazuya/nextjs-component-catalog",
-  "description": "CLI to generate component catalog for Next.js (App Router)",
   "version": "0.1.0",
-  "type": "module",
+  "description": "CLI to generate component catalog for Next.js (App Router)",
   "license": "MIT",
+  "author": "KoharaKazuya <reflect.results@gmail.com>",
   "files": [
     "lib",
     "src"
@@ -23,7 +23,7 @@
       }
     }
   },
-  "author": "KoharaKazuya <reflect.results@gmail.com>",
+  "repository": "github:KoharaKazuya/nextjs-component-catalog",
   "scripts": {
     "build": "tsc",
     "test": "node --test",
@@ -49,5 +49,6 @@
   },
   "engines": {
     "node": ">=22"
-  }
+  },
+  "type": "module"
 }
