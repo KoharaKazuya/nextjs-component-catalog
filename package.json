@@ -6,7 +6,10 @@
   "author": "KoharaKazuya <reflect.results@gmail.com>",
   "files": [
     "lib",
-    "src"
+    "src",
+    "tsconfig.json",
+    "tsconfig.node.json",
+    "tsconfig.app.json"
   ],
   "bin": "lib/cli.js",
   "exports": {
@@ -18,14 +21,14 @@
     },
     "./IndexPage": {
       "import": {
-        "types": "./lib/IndexPage.d.ts",
-        "default": "./lib/IndexPage.js"
+        "types": "./lib/IndexPage/IndexPage.d.ts",
+        "default": "./lib/IndexPage/IndexPage.js"
       }
     }
   },
   "repository": "github:KoharaKazuya/nextjs-component-catalog",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "test": "node --test",
     "dev:build": "tsc --watch",
     "dev:test": "node --test --watch"

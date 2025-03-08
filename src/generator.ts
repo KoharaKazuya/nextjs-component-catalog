@@ -3,7 +3,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { normalizeAppPath } from "./app-router.js";
-import type { IndexPageProps } from "./IndexPage.js";
 import { startWatcher } from "./watcher.js";
 
 export type Options = {
