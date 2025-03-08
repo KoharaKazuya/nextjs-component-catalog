@@ -134,7 +134,7 @@ export async function build(options: Options = {}) {
         const genFilePath = path.join(genFileDir, "page.tsx");
 
         await fs.mkdir(genFileDir, { recursive: true });
-        await fs.writeFile(
+        await writeFileIfChanged(
           genFilePath,
           `import { ${name} } from "${path.relative(
             genFileDir,
@@ -145,9 +145,6 @@ export async function build(options: Options = {}) {
             `  return <${name} />;\n` +
             `}\n`
         );
-
-        if (!quiet)
-          console.log(` Write: ${path.relative(projectRoot, genFilePath)}`);
       })
     );
 
@@ -195,9 +192,7 @@ export async function build(options: Options = {}) {
         links
       )}} env={${JSON.stringify({ catalogPath })}} />;\n` +
       `}\n`;
-    await fs.writeFile(path.join(outputPath, "page.tsx"), indexPageCode);
-
-    if (!quiet) console.log(`Update: index page`);
+    await writeFileIfChanged(path.join(outputPath, "page.tsx"), indexPageCode);
   }
 
   function getGenTargetDir(targetFilePath: string) {
@@ -207,6 +202,24 @@ export async function build(options: Options = {}) {
     );
     const genTargetDir = path.join(outputPath, genPathBase);
     return genTargetDir;
+  }
+
+  /**
+   * 指定パスにファイルを上書き生成する
+   * （すでにファイルが存在し、内容が同じであれば何もしない）
+   */
+  async function writeFileIfChanged(genFilePath: string, content: string) {
+    // 既存のファイルが存在し、出力ファイルと同じなら何もしない
+    try {
+      const existingContent = await fs.readFile(genFilePath, {
+        encoding: "utf-8",
+      });
+      if (existingContent === content) return;
+    } catch {}
+
+    await fs.writeFile(genFilePath, content);
+    if (!quiet)
+      console.log(` Write: ${path.relative(projectRoot, genFilePath)}`);
   }
 }
 
