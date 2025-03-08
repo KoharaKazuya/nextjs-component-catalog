@@ -38,8 +38,9 @@ export function constructTree(items: string[]): TreeNode {
 
 function compact(tree: TreeNode): TreeNode {
   const onlyOneChild = tree.children.length === 1;
+  const childIsDir = onlyOneChild && tree.children[0].children.length > 0;
 
-  if (!onlyOneChild)
+  if (!(onlyOneChild && childIsDir))
     return { ...tree, children: tree.children.map((child) => compact(child)) };
 
   const child = tree.children[0];

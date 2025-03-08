@@ -38,6 +38,32 @@ describe("constructTree", () => {
     assert.deepStrictEqual(constructTree(items), expected);
   });
 
+  it("ディレクトリ内にファイルが一つのみでもディレクトリとファイルの階層は分ける", () => {
+    const items = ["file0", "dir1/file1", "dir2/dir3/file2"];
+    const expected: TreeNode = {
+      name: "",
+      path: "",
+      children: [
+        {
+          name: "file0",
+          path: "/file0",
+          children: [],
+        },
+        {
+          name: "dir1",
+          path: "/dir1",
+          children: [{ name: "file1", path: "/dir1/file1", children: [] }],
+        },
+        {
+          name: "dir2/dir3",
+          path: "/dir2/dir3",
+          children: [{ name: "file2", path: "/dir2/dir3/file2", children: [] }],
+        },
+      ],
+    };
+    assert.deepStrictEqual(constructTree(items), expected);
+  });
+
   it("ネストされたディレクトリに入ったファイルを渡すと最大限まとめる", () => {
     const items = [
       "file0",
@@ -70,9 +96,15 @@ describe("constructTree", () => {
           path: "/dir4",
           children: [
             {
-              name: "dir5/file3",
-              path: "/dir4/dir5/file3",
-              children: [],
+              name: "dir5",
+              path: "/dir4/dir5",
+              children: [
+                {
+                  name: "file3",
+                  path: "/dir4/dir5/file3",
+                  children: [],
+                },
+              ],
             },
             {
               name: "file4",
