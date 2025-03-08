@@ -166,8 +166,12 @@ export async function build(options: Options = {}) {
       Object.entries(watcher.getWatched())
         .flatMap(([dir, names]) => names.map((name) => path.join(dir, name)))
         .map(async (p) => {
-          const stat = await fs.stat(p);
-          return [p, stat.isFile()] as const;
+          let isFile = false;
+          try {
+            const stat = await fs.stat(p);
+            isFile = stat.isFile();
+          } catch {}
+          return [p, isFile] as const;
         })
     );
     const files = entries.filter(([, isFile]) => isFile).map(([p]) => p);
