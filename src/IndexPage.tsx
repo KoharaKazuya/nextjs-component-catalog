@@ -24,22 +24,24 @@ export default function IndexPage({ links, env }: IndexPageProps) {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "auto 1fr",
+        gridTemplateColumns: "1fr 3fr",
         height: "100dvh",
         background: "#eee",
       }}
     >
-      <LinkTree
-        tree={tree}
-        itemRenderer={({ path, name }) => (
-          <>
-            <Link href={getInternalLink(path)}>{name}</Link>{" "}
-            <Link href={getExternalLink(path)} target="_blank">
-              <small>↗</small>
-            </Link>
-          </>
-        )}
-      />
+      <div style={{ overflow: "auto" }}>
+        <LinkTree
+          tree={tree}
+          itemRenderer={({ path, name }) => (
+            <>
+              <Link href={getInternalLink(path)}>{name}</Link>{" "}
+              <Link href={getExternalLink(path)} target="_blank">
+                <small>↗</small>
+              </Link>
+            </>
+          )}
+        />
+      </div>
       <iframe
         key={resource}
         src={resource ?? undefined}
