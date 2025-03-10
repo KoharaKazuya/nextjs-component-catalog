@@ -176,6 +176,9 @@ export async function build(options: Options = {}) {
     );
     const files = entries.filter(([, isFile]) => isFile).map(([p]) => p);
 
+    // watcher の出力順に左右されず決定論的動作をするため並び替える
+    files.sort();
+
     const links = (
       await Promise.all(
         files.map(async (targetFilePath) => {
