@@ -208,11 +208,22 @@ export async function build(options: Options = {}) {
     return genTargetDir;
   }
 
+  const debouncedCache = new Map<string, { cancel: () => void }>();
   /**
    * 指定パスにファイルを上書き生成する
    * （すでにファイルが存在し、内容が同じであれば何もしない）
    */
   async function writeFileIfChanged(genFilePath: string, content: string) {
+    // 短い間隔で呼ばれる場合は、しばらく呼ばれなくなるまで待つ
+    debouncedCache.get(genFilePath)?.cancel();
+    const canceled = await Promise.race([
+      new Promise<boolean>((resolve) =>
+        debouncedCache.set(genFilePath, { cancel: () => resolve(true) })
+      ),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 250)),
+    ]);
+    if (canceled) return;
+
     // 既存のファイルが存在し、出力ファイルと同じなら何もしない
     try {
       const existingContent = await fs.readFile(genFilePath, {
