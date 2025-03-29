@@ -25,7 +25,9 @@ export default function IndexPageInner({ links, env }: IndexPageProps) {
       }}
     >
       <div style={{ overflow: "auto" }}>
-        <Link href="/">Home</Link>
+        <Link href="/" style={{ display: "block", margin: "8px 20px" }}>
+          Home
+        </Link>
         <LinkTree
           tree={tree}
           itemRenderer={({ path, name }) => (
@@ -54,7 +56,7 @@ function LinkTree({
       <div style={{ color: "#666", fontSize: 14, margin: "16px auto 8px" }}>
         {tree.name}
       </div>
-      <ul style={{ padding: 8 }}>
+      <ul style={{ padding: "8px 8px 8px 20px" }}>
         {tree.children.map((child) => (
           <li key={child.path}>
             {child.children.length > 0 ? (
