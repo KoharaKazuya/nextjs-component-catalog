@@ -1,6 +1,6 @@
 {
   "name": "@koharakazuya/nextjs-component-catalog",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "CLI to generate component catalog for Next.js (App Router)",
   "license": "MIT",
   "author": "KoharaKazuya <reflect.results@gmail.com>",
