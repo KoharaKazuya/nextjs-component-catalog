@@ -51,11 +51,17 @@ function LinkTree({
   tree: TreeNode;
   itemRenderer: (leaf: TreeNode) => ReactNode;
 }) {
+  const hasLeaf = tree.children.some((child) => child.children.length === 0);
   return (
     <div>
-      <div style={{ color: "#666", fontSize: 14, margin: "16px auto 8px" }}>
+      <div style={{ color: "#666", fontSize: 14, margin: "16px auto 0" }}>
         {tree.name}
       </div>
+      {hasLeaf && (
+        <div style={{ color: "#999", fontSize: 11, margin: "0 auto 8px" }}>
+          {tree.path}
+        </div>
+      )}
       <ul style={{ padding: "8px 8px 8px 20px" }}>
         {tree.children.map((child) => (
           <li key={child.path}>
